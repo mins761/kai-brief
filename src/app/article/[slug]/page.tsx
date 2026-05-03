@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import AdBanner from '@/components/AdBanner';
 import CategoryTag from '@/components/CategoryTag';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import NewsCard from '@/components/NewsCard';
-import { getArticleBySlug, getArticles } from '@/lib/articles';
+import { categoryImages, getArticleBySlug, getArticles } from '@/lib/articles';
 
 export const revalidate = 3600;
 
@@ -15,6 +16,7 @@ export async function generateMetadata({
   params: { slug: string };
 }): Promise<Metadata> {
   const article = await getArticleBySlug(params.slug);
+  const imageUrl = article.image_url || categoryImages[article.category];
 
   return {
     title: article.title_en,
@@ -22,7 +24,7 @@ export async function generateMetadata({
     openGraph: {
       title: article.title_en,
       description: article.summary_en,
-      images: [`/og-${article.category}.png`]
+      images: [imageUrl]
     },
     alternates: {
       canonical: `/article/${article.slug}`
@@ -32,8 +34,11 @@ export async function generateMetadata({
 
 export default async function ArticlePage({ params }: { params: { slug: string } }) {
   const article = await getArticleBySlug(params.slug);
-  const related = (await getArticles(article.category, 4)).filter((item) => item.slug !== article.slug);
+  const related = (await getArticles(article.category, 4)).filter(
+    (item) => item.slug !== article.slug
+  );
   const paragraphs = article.body_en.split(/\n+/).filter(Boolean);
+  const imageUrl = article.image_url || categoryImages[article.category];
 
   return (
     <>
@@ -56,6 +61,18 @@ export default async function ArticlePage({ params }: { params: { slug: string }
                 {article.source_name}
               </a>
             </p>
+          </div>
+
+          <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-3xl bg-kai-gray shadow-card">
+            <Image
+              src={imageUrl}
+              alt=""
+              fill
+              priority
+              sizes="(min-width: 768px) 720px, 100vw"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-kai-navy/20 to-transparent" />
           </div>
 
           <hr className="my-8 border-kai-border" />
@@ -85,7 +102,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             href="/"
             className="mt-10 inline-flex rounded-full border border-kai-border px-5 py-2 text-sm font-black text-kai-navy transition hover:bg-kai-gray"
           >
-            ← Back to briefs
+            Back to briefs
           </Link>
         </article>
 
