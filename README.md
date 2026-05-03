@@ -8,7 +8,7 @@ KAI Brief is a Next.js 14 news media site for Korea's AI and economy news in Eng
 - TypeScript
 - Tailwind CSS
 - Supabase
-- Python collector with Gemini and DART support
+- Python collector with OpenRouter Gemini and DART support
 
 ## Local Setup
 
@@ -38,22 +38,22 @@ npm run dev
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_URL`
 - `SUPABASE_KEY`
-- `GEMINI_API_KEY`
+- `OPENROUTER_API_KEY`
 - `DART_API_KEY`
 - `NEXT_PUBLIC_SITE_URL`
 
 ## Collector
 
-The collector reads Korean RSS feeds and DART disclosures, rewrites new items in English with Gemini, and inserts them into Supabase.
+The collector reads Korean RSS feeds and DART disclosures, rewrites new items in English through OpenRouter, and inserts them into Supabase.
 
 ```bash
-pip install feedparser requests google-generativeai supabase python-dotenv
+pip install feedparser requests supabase python-dotenv
 python scripts/collect.py
 ```
 
 GitHub Actions runs `.github/workflows/collect.yml` every two hours. Add these repository secrets:
 
-- `GEMINI_API_KEY`
+- `OPENROUTER_API_KEY`
 - `SUPABASE_URL`
 - `SUPABASE_KEY`
 - `DART_API_KEY`

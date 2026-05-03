@@ -19,11 +19,11 @@ jobs:
           python-version: '3.11'
 
       - name: Install collector dependencies
-        run: pip install feedparser requests google-generativeai supabase python-dotenv
+        run: pip install feedparser requests supabase python-dotenv
 
       - name: Run collector
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           DART_API_KEY: ${{ secrets.DART_API_KEY }}

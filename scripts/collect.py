@@ -6,8 +6,7 @@ from datetime import datetime
 from typing import Any
 
 import feedparser
-import google.generativeai as genai
-import requests
+import requests as req
 from dotenv import load_dotenv
 from supabase import create_client
 
@@ -30,12 +29,10 @@ def require_env(name: str) -> str:
 
 SUPABASE_URL = require_env("SUPABASE_URL")
 SUPABASE_KEY = require_env("SUPABASE_KEY")
-GEMINI_API_KEY = require_env("GEMINI_API_KEY")
+OPENROUTER_API_KEY = require_env("OPENROUTER_API_KEY")
 DART_API_KEY = os.getenv("DART_API_KEY", "")
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
 
 
 def slug_for(url: str) -> str:
@@ -53,25 +50,52 @@ def is_duplicate(source_url: str) -> bool:
     return bool(result.data)
 
 
-def rewrite_article(title: str, body: str) -> dict[str, Any]:
-    prompt = f"""
-You are an English financial journalist.
-Rewrite this Korean news for global readers.
-150-200 words. Add global context.
+def rewrite_to_english(title: str, summary: str) -> str:
+    response = req.post(
+        "https://openrouter.ai/api/v1/chat/completions",
+        headers={
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://kaibrief.com",
+            "X-Title": "KAI Brief",
+        },
+        json={
+            "model": "google/gemini-2.0-flash-exp:free",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": f"""
+You are an English financial journalist covering Korean economy and AI.
+Rewrite into original English article for global readers.
+150-200 words, add global context. Factual only.
+
+Korean Title: {title}
+Korean Summary: {summary}
+
 Return JSON only:
-{{"title":"", "body":"", "summary":"", "category":"economy|ai|policy|market", "tags":[]}}
+{{"title":"...","body":"...","summary":"...","category":"economy|ai|policy|market","tags":["tag1","tag2"]}}
+""".strip(),
+                }
+            ],
+        },
+        timeout=60,
+    )
+    response.raise_for_status()
+    data = response.json()
+    return data["choices"][0]["message"]["content"]
 
-Title: {title}
-Body: {body}
-""".strip()
 
-    response = model.generate_content(prompt)
-    raw_text = response.text.strip().removeprefix("```json").removesuffix("```").strip()
-    parsed = json.loads(raw_text)
+def parse_rewrite(raw_text: str) -> dict[str, Any]:
+    cleaned = raw_text.strip().removeprefix("```json").removesuffix("```").strip()
+    parsed = json.loads(cleaned)
     parsed["category"] = parsed.get("category", "economy").lower()
     if parsed["category"] not in CATEGORIES:
         parsed["category"] = "economy"
     return parsed
+
+
+def rewrite_article(title: str, body: str) -> dict[str, Any]:
+    return parse_rewrite(rewrite_to_english(title, body))
 
 
 def collect_rss_items() -> list[dict[str, str]]:
@@ -95,7 +119,7 @@ def collect_dart_items() -> list[dict[str, str]]:
         return []
 
     today = datetime.utcnow().strftime("%Y%m%d")
-    response = requests.get(
+    response = req.get(
         "https://opendart.fss.or.kr/api/list.json",
         params={
             "crtfc_key": DART_API_KEY,
