@@ -38,6 +38,7 @@ export const defaultArticles: Article[] = [
     source_name: 'KAI Brief Desk',
     tags: ['AI', 'Semiconductors', 'Korea'],
     slug: 'korea-ai-chip-policy',
+    image_url: null,
     published_at: new Date().toISOString(),
     is_published: true
   },
@@ -53,6 +54,7 @@ export const defaultArticles: Article[] = [
     source_name: 'KAI Brief Desk',
     tags: ['Exports', 'Memory', 'Economy'],
     slug: 'korea-export-memory-recovery',
+    image_url: null,
     published_at: new Date(Date.now() - 3600_000).toISOString(),
     is_published: true
   }

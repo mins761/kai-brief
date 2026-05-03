@@ -10,6 +10,7 @@ export type Article = {
   source_name: string;
   tags: string[];
   slug: string;
+  image_url?: string | null;
   published_at: string;
   is_published: boolean;
 };

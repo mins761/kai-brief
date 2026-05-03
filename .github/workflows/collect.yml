@@ -11,6 +11,7 @@ jobs:
     env:
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       OPENROUTER_MODEL: google/gemini-2.5-flash-lite
+      UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
@@ -31,12 +32,13 @@ jobs:
 
       - name: Validate required secrets
         run: |
-          python -c "import os, sys; missing=[]; missing += [] if os.getenv('OPENROUTER_API_KEY') else ['OPENROUTER_API_KEY']; missing += [] if (os.getenv('SUPABASE_URL') or os.getenv('NEXT_PUBLIC_SUPABASE_URL')) else ['SUPABASE_URL or NEXT_PUBLIC_SUPABASE_URL']; missing += [] if (os.getenv('SUPABASE_KEY') or os.getenv('SUPABASE_ANON_KEY') or os.getenv('NEXT_PUBLIC_SUPABASE_ANON_KEY')) else ['SUPABASE_KEY or SUPABASE_ANON_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY']; print('Missing required secrets: ' + ', '.join(missing)) if missing else print('Required secrets are configured.'); sys.exit(1 if missing else 0)"
+          python -c "import os, sys; missing=[]; missing += [] if os.getenv('OPENROUTER_API_KEY') else ['OPENROUTER_API_KEY']; missing += [] if os.getenv('UNSPLASH_ACCESS_KEY') else ['UNSPLASH_ACCESS_KEY']; missing += [] if (os.getenv('SUPABASE_URL') or os.getenv('NEXT_PUBLIC_SUPABASE_URL')) else ['SUPABASE_URL or NEXT_PUBLIC_SUPABASE_URL']; missing += [] if (os.getenv('SUPABASE_KEY') or os.getenv('SUPABASE_ANON_KEY') or os.getenv('NEXT_PUBLIC_SUPABASE_ANON_KEY')) else ['SUPABASE_KEY or SUPABASE_ANON_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY']; print('Missing required secrets: ' + ', '.join(missing)) if missing else print('Required secrets are configured.'); sys.exit(1 if missing else 0)"
 
       - name: Run collector
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OPENROUTER_MODEL: google/gemini-2.5-flash-lite
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}

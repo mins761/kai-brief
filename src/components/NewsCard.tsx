@@ -10,6 +10,7 @@ import type { Article } from '@/types';
 export default function NewsCard({ article, index = 0 }: { article: Article; index?: number }) {
   const ref = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
+  const imageUrl = article.image_url || categoryImages[article.category];
 
   useEffect(() => {
     const node = ref.current;
@@ -40,7 +41,7 @@ export default function NewsCard({ article, index = 0 }: { article: Article; ind
       <Link href={`/article/${article.slug}`} className="flex h-full flex-col">
         <div className="relative h-44 bg-kai-gray">
           <Image
-            src={categoryImages[article.category]}
+            src={imageUrl}
             alt=""
             fill
             sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"

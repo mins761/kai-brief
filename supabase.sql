@@ -8,10 +8,13 @@ CREATE TABLE articles (
   source_name TEXT,
   tags TEXT[],
   slug TEXT UNIQUE,
+  image_url TEXT,
   is_published BOOLEAN DEFAULT true,
   published_at TIMESTAMPTZ DEFAULT NOW(),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS image_url TEXT;
 
 CREATE TABLE emails (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,

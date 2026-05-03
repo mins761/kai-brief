@@ -45,6 +45,7 @@ SUPABASE_KEY = require_env(
 )
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "google/gemini-2.5-flash-lite")
+UNSPLASH_ACCESS_KEY = optional_env("UNSPLASH_ACCESS_KEY")
 DART_API_KEY = optional_env("DART_API_KEY")
 
 if not OPENROUTER_API_KEY:
@@ -127,6 +128,35 @@ def rewrite_article(title: str, body: str) -> dict[str, Any]:
     return parse_rewrite(rewrite_to_english(title, body))
 
 
+def get_unsplash_image(keyword: str) -> str | None:
+    if not UNSPLASH_ACCESS_KEY or not keyword:
+        return None
+
+    response = req.get(
+        "https://api.unsplash.com/search/photos",
+        params={
+            "query": keyword,
+            "per_page": 1,
+            "orientation": "landscape",
+        },
+        headers={
+            "Authorization": f"Client-ID {UNSPLASH_ACCESS_KEY}",
+        },
+        timeout=20,
+    )
+
+    if not response.ok:
+        print(f"Unsplash status: {response.status_code}")
+        print(f"Unsplash response: {response.text[:300]}")
+        return None
+
+    data = response.json()
+    results = data.get("results", [])
+    if results:
+        return results[0].get("urls", {}).get("regular")
+    return None
+
+
 def collect_rss_items() -> list[dict[str, str]]:
     items: list[dict[str, str]] = []
     for feed_url in RSS_FEEDS:
@@ -178,6 +208,8 @@ def collect_dart_items() -> list[dict[str, str]]:
 
 def insert_article(item: dict[str, str], rewritten: dict[str, Any]) -> None:
     source_url = item["source_url"]
+    keyword = " ".join(str(rewritten["title"]).split()[:3])
+    image_url = get_unsplash_image(keyword)
     payload = {
         "title_en": rewritten["title"],
         "body_en": rewritten["body"],
@@ -187,6 +219,7 @@ def insert_article(item: dict[str, str], rewritten: dict[str, Any]) -> None:
         "source_name": item["source_name"],
         "tags": rewritten.get("tags", []),
         "slug": slug_for(source_url),
+        "image_url": image_url,
         "is_published": True,
     }
     supabase.table("articles").insert(payload).execute()

@@ -5,6 +5,8 @@ import { categoryImages, formatRelativeTime } from '@/lib/articles';
 import type { Article } from '@/types';
 
 export default function HeroSection({ article }: { article: Article }) {
+  const imageUrl = article.image_url || categoryImages[article.category];
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <Link
@@ -25,7 +27,7 @@ export default function HeroSection({ article }: { article: Article }) {
         </div>
         <div className="relative min-h-72 overflow-hidden rounded-2xl bg-kai-navy p-6 text-white">
           <Image
-            src={categoryImages[article.category]}
+            src={imageUrl}
             alt=""
             fill
             priority
