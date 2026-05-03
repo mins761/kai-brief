@@ -6,6 +6,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://kai-brief.example.com';
+const googleAnalyticsId = 'G-NRH9JSSD9P';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -43,8 +44,18 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         {children}
-        <Script id="ga-placeholder" strategy="afterInteractive">
-          {`window.dataLayer = window.dataLayer || [];`}
+        <Script
+          id="google-tag-manager"
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${googleAnalyticsId}');
+          `}
         </Script>
         <Script
           id="adsense-placeholder"
