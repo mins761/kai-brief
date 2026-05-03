@@ -1,11 +1,15 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 import CategoryTag from '@/components/CategoryTag';
 import { categoryImages, formatRelativeTime } from '@/lib/articles';
 import type { Article } from '@/types';
 
 export default function HeroSection({ article }: { article: Article }) {
-  const imageUrl = article.image_url || categoryImages[article.category];
+  const fallbackImage = categoryImages[article.category] || categoryImages.economy;
+  const [imageUrl, setImageUrl] = useState(article.image_url || fallbackImage);
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -33,6 +37,7 @@ export default function HeroSection({ article }: { article: Article }) {
             priority
             sizes="(min-width: 768px) 45vw, 100vw"
             className="object-cover opacity-80"
+            onError={() => setImageUrl(fallbackImage)}
           />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,212,255,0.55),transparent_28%),linear-gradient(135deg,rgba(26,26,46,0.82),rgba(13,100,116,0.76))]" />
           <div className="relative z-10">

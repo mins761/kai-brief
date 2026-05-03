@@ -35,13 +35,13 @@ export const categoryColors: Record<Category, string> = {
 };
 
 export const categoryImages: Record<Category, string> = {
-  economy: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400',
-  ai: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400',
-  policy: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=400',
-  market: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400',
-  culture: 'https://images.unsplash.com/photo-1598387993441-a364f854cfdd?w=800&q=80',
-  beauty: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&q=80',
-  travel: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=800&q=80'
+  economy: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800',
+  ai: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800',
+  culture: 'https://images.unsplash.com/photo-1598387993441-a364f854cfdd?w=800',
+  beauty: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800',
+  travel: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=800',
+  market: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800',
+  policy: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=800'
 };
 
 export const defaultArticles: Article[] = [

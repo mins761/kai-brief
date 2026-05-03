@@ -10,7 +10,8 @@ import type { Article } from '@/types';
 export default function NewsCard({ article, index = 0 }: { article: Article; index?: number }) {
   const ref = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
-  const imageUrl = article.image_url || categoryImages[article.category];
+  const fallbackImage = categoryImages[article.category] || categoryImages.economy;
+  const [imageUrl, setImageUrl] = useState(article.image_url || fallbackImage);
 
   useEffect(() => {
     const node = ref.current;
@@ -46,6 +47,7 @@ export default function NewsCard({ article, index = 0 }: { article: Article; ind
             fill
             sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
             className="object-cover transition duration-500 hover:scale-105"
+            onError={() => setImageUrl(fallbackImage)}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-kai-navy/45 to-transparent" />
         </div>
