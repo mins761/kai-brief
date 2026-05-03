@@ -43,8 +43,12 @@ SUPABASE_KEY = require_env(
     "SUPABASE_ANON_KEY",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY",
 )
-OPENROUTER_API_KEY = require_env("OPENROUTER_API_KEY")
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
+OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "google/gemini-flash-latest")
 DART_API_KEY = optional_env("DART_API_KEY")
+
+if not OPENROUTER_API_KEY:
+    raise RuntimeError("OPENROUTER_API_KEY is required")
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
@@ -65,6 +69,13 @@ def is_duplicate(source_url: str) -> bool:
 
 
 def rewrite_to_english(title: str, summary: str) -> str:
+    print(f"API Key exists: {bool(OPENROUTER_API_KEY)}")
+    print(
+        "API Key prefix: "
+        f"{OPENROUTER_API_KEY[:6]}..." if OPENROUTER_API_KEY else "API Key prefix: None"
+    )
+    print(f"OpenRouter model: {OPENROUTER_MODEL}")
+
     response = req.post(
         "https://openrouter.ai/api/v1/chat/completions",
         headers={
@@ -74,7 +85,7 @@ def rewrite_to_english(title: str, summary: str) -> str:
             "X-Title": "KAI Brief",
         },
         json={
-            "model": "google/gemini-2.0-flash-exp:free",
+            "model": OPENROUTER_MODEL,
             "messages": [
                 {
                     "role": "user",
@@ -94,7 +105,11 @@ Return JSON only:
         },
         timeout=60,
     )
-    response.raise_for_status()
+    if not response.ok:
+        print(f"OpenRouter status: {response.status_code}")
+        print(f"OpenRouter response: {response.text[:500]}")
+        response.raise_for_status()
+
     data = response.json()
     return data["choices"][0]["message"]["content"]
 

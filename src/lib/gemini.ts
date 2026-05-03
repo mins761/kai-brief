@@ -14,7 +14,7 @@ export async function rewriteWithGemini(input: string) {
       'X-Title': 'KAI Brief'
     },
     body: JSON.stringify({
-      model: 'google/gemini-2.0-flash-exp:free',
+      model: process.env.OPENROUTER_MODEL || 'google/gemini-flash-latest',
       messages: [{ role: 'user', content: input }]
     })
   });
