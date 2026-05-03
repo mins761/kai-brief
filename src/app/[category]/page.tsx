@@ -11,7 +11,9 @@ import type { Category } from '@/types';
 export const revalidate = 3600;
 
 export function generateStaticParams() {
-  return categories.map((category) => ({ category }));
+  return ['economy', 'ai', 'policy', 'market', 'culture', 'beauty', 'travel'].map((category) => ({
+    category
+  }));
 }
 
 export async function generateMetadata({ params }: { params: { category: string } }) {

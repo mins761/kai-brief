@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { categories, categoryLabels } from '@/lib/articles';
+import { categoryLabels, visibleCategories } from '@/lib/articles';
 import type { Category } from '@/types';
 
 export default function CategoryBar({ active }: { active?: Category | 'all' }) {
@@ -14,7 +14,7 @@ export default function CategoryBar({ active }: { active?: Category | 'all' }) {
         >
           All
         </Link>
-        {categories.map((category) => (
+        {visibleCategories.map((category) => (
           <Link
             key={category}
             href={`/${category}`}

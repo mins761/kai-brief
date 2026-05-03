@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { categories, categoryLabels } from '@/lib/articles';
+import { categoryLabels, visibleCategories } from '@/lib/articles';
 
 export default function Header() {
   const pathname = usePathname();
@@ -19,11 +19,13 @@ export default function Header() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex flex-col">
           <span className="text-2xl font-black tracking-tight">KAI Brief</span>
-          <span className="text-xs text-white/55">Korea&apos;s AI & Economy, Briefly Told</span>
+          <span className="text-xs text-white/55">
+            Korea&apos;s Culture, Beauty & Economy, Briefly Told
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">
-          {categories.map((category) => {
+          {visibleCategories.map((category) => {
             const href = `/${category}`;
             const isActive = pathname === href;
 
@@ -64,7 +66,7 @@ export default function Header() {
       {isOpen ? (
         <div className="border-t border-white/10 px-4 pb-5 md:hidden">
           <nav className="flex flex-col gap-3 pt-4">
-            {categories.map((category) => (
+            {visibleCategories.map((category) => (
               <Link
                 key={category}
                 href={`/${category}`}

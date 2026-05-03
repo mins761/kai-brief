@@ -1,4 +1,4 @@
-export type Category = 'economy' | 'ai' | 'policy' | 'market';
+export type Category = 'economy' | 'ai' | 'policy' | 'market' | 'culture' | 'beauty' | 'travel';
 
 export type Article = {
   id: string;

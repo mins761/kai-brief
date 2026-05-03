@@ -2,27 +2,46 @@ import { notFound } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import type { Article, Category } from '@/types';
 
-export const categories: Category[] = ['economy', 'ai', 'policy', 'market'];
+export const categories: Category[] = [
+  'economy',
+  'ai',
+  'policy',
+  'market',
+  'culture',
+  'beauty',
+  'travel'
+];
+
+export const visibleCategories: Category[] = ['economy', 'ai', 'culture', 'beauty', 'travel'];
 
 export const categoryLabels: Record<Category, string> = {
   economy: 'Economy',
   ai: 'AI',
   policy: 'Policy',
-  market: 'Market'
+  market: 'Market',
+  culture: 'Culture',
+  beauty: 'Beauty',
+  travel: 'Travel'
 };
 
 export const categoryColors: Record<Category, string> = {
   economy: 'bg-blue-100 text-blue-700',
   ai: 'bg-cyan-100 text-cyan-700',
   policy: 'bg-green-100 text-green-700',
-  market: 'bg-orange-100 text-orange-700'
+  market: 'bg-orange-100 text-orange-700',
+  culture: 'bg-pink-100 text-pink-700',
+  beauty: 'bg-rose-100 text-rose-700',
+  travel: 'bg-green-100 text-green-700'
 };
 
 export const categoryImages: Record<Category, string> = {
   economy: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400',
   ai: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400',
   policy: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=400',
-  market: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400'
+  market: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400',
+  culture: 'https://images.unsplash.com/photo-1598387993441-a364f854cfdd?w=800&q=80',
+  beauty: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&q=80',
+  travel: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=800&q=80'
 };
 
 export const defaultArticles: Article[] = [

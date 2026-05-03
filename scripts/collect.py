@@ -15,9 +15,13 @@ load_dotenv()
 RSS_FEEDS = [
     "https://aitimes.com/rss/allArticle.xml",
     "https://www.etnews.com/rss/section/1",
+    "https://www.soompi.com/feed",
+    "https://www.allkpop.com/rss",
+    "https://english.visitkorea.or.kr/rss/news.rss",
+    "https://www.koreatimes.co.kr/www/rss/rss.xml",
 ]
 
-CATEGORIES = {"economy", "ai", "policy", "market"}
+CATEGORIES = {"economy", "ai", "policy", "market", "culture", "beauty", "travel"}
 
 
 def require_env(*names: str) -> str:
@@ -98,8 +102,17 @@ Rewrite into original English article for global readers.
 Korean Title: {title}
 Korean Summary: {summary}
 
+Category guidance:
+- culture: K-Pop, K-Drama, Korean entertainment
+- beauty: K-Beauty, skincare, cosmetics
+- travel: Korea tourism, travel destinations
+- economy: Korean economy, business, companies, trade
+- ai: artificial intelligence, chips, automation, technology
+- policy: government policy, regulation, public affairs
+- market: finance, stocks, bonds, currencies
+
 Return JSON only:
-{{"title":"...","body":"...","summary":"...","category":"economy|ai|policy|market","tags":["tag1","tag2"]}}
+{{"title":"...","body":"...","summary":"...","category":"economy|ai|policy|market|culture|beauty|travel","tags":["tag1","tag2"]}}
 """.strip(),
                 }
             ],
@@ -126,6 +139,20 @@ def parse_rewrite(raw_text: str) -> dict[str, Any]:
 
 def rewrite_article(title: str, body: str) -> dict[str, Any]:
     return parse_rewrite(rewrite_to_english(title, body))
+
+
+def infer_category(title: str, summary: str) -> str | None:
+    text = f"{title} {summary}".lower()
+    keyword_categories = {
+        "culture": ["kpop", "k-pop", "drama", "bts", "blackpink", "kdrama", "k-drama"],
+        "beauty": ["beauty", "skincare", "skin care", "makeup", "cosmetic", "cosmetics"],
+        "travel": ["travel", "tourism", "jeju", "seoul", "visit"],
+    }
+
+    for category, keywords in keyword_categories.items():
+        if any(keyword in text for keyword in keywords):
+            return category
+    return None
 
 
 def get_unsplash_image(keyword: str) -> str | None:
@@ -208,6 +235,10 @@ def collect_dart_items() -> list[dict[str, str]]:
 
 def insert_article(item: dict[str, str], rewritten: dict[str, Any]) -> None:
     source_url = item["source_url"]
+    inferred_category = infer_category(item.get("title", ""), item.get("body", ""))
+    if inferred_category:
+        rewritten["category"] = inferred_category
+
     keyword = " ".join(str(rewritten["title"]).split()[:3])
     image_url = get_unsplash_image(keyword)
     payload = {
