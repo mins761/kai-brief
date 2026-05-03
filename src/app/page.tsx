@@ -7,7 +7,7 @@ import Newsletter from '@/components/Newsletter';
 import NewsCard from '@/components/NewsCard';
 import { getArticles } from '@/lib/articles';
 
-export const revalidate = 3600;
+export const revalidate = 0;
 
 export default async function HomePage() {
   const articles = await getArticles(undefined, 12);
