@@ -53,6 +53,15 @@ pip install feedparser requests supabase python-dotenv
 python scripts/collect.py
 ```
 
+If Unsplash returns `401`, confirm the GitHub secret `UNSPLASH_ACCESS_KEY` contains the Unsplash application Access Key, not the Secret Key or an OAuth token.
+
+If Supabase reports that `articles.image_url` is missing, run this in the Supabase SQL editor and then reload the schema cache if needed:
+
+```sql
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS image_url TEXT;
+NOTIFY pgrst, 'reload schema';
+```
+
 GitHub Actions runs `.github/workflows/collect.yml` every two hours. Add these repository secrets:
 
 - `OPENROUTER_API_KEY`

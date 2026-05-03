@@ -253,7 +253,15 @@ def insert_article(item: dict[str, str], rewritten: dict[str, Any]) -> None:
         "image_url": image_url,
         "is_published": True,
     }
-    supabase.table("articles").insert(payload).execute()
+    try:
+        supabase.table("articles").insert(payload).execute()
+    except Exception as exc:
+        if "image_url" not in str(exc):
+            raise
+
+        print("articles.image_url is unavailable; inserting article without image_url.")
+        payload.pop("image_url", None)
+        supabase.table("articles").insert(payload).execute()
 
 
 def main() -> None:
