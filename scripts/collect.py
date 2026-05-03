@@ -20,17 +20,31 @@ RSS_FEEDS = [
 CATEGORIES = {"economy", "ai", "policy", "market"}
 
 
-def require_env(name: str) -> str:
-    value = os.getenv(name)
-    if not value:
-        raise RuntimeError(f"{name} is required")
-    return value
+def require_env(*names: str) -> str:
+    for name in names:
+        value = os.getenv(name)
+        if value:
+            return value
+    joined_names = " or ".join(names)
+    raise RuntimeError(f"{joined_names} is required")
 
 
-SUPABASE_URL = require_env("SUPABASE_URL")
-SUPABASE_KEY = require_env("SUPABASE_KEY")
+def optional_env(*names: str) -> str:
+    for name in names:
+        value = os.getenv(name)
+        if value:
+            return value
+    return ""
+
+
+SUPABASE_URL = require_env("SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_URL")
+SUPABASE_KEY = require_env(
+    "SUPABASE_KEY",
+    "SUPABASE_ANON_KEY",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+)
 OPENROUTER_API_KEY = require_env("OPENROUTER_API_KEY")
-DART_API_KEY = os.getenv("DART_API_KEY", "")
+DART_API_KEY = optional_env("DART_API_KEY")
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
