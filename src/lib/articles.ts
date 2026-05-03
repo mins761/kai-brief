@@ -18,6 +18,13 @@ export const categoryColors: Record<Category, string> = {
   market: 'bg-orange-100 text-orange-700'
 };
 
+export const categoryImages: Record<Category, string> = {
+  economy: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400',
+  ai: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400',
+  policy: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=400',
+  market: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400'
+};
+
 export const defaultArticles: Article[] = [
   {
     id: 'seed-1',
