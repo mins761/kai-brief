@@ -32,6 +32,9 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: siteUrl
+  },
+  other: {
+    'google-adsense-account': 'ca-pub-2432965833930637'
   }
 };
 
