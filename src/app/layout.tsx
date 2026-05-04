@@ -58,10 +58,10 @@ export default function RootLayout({
           `}
         </Script>
         <Script
-          id="adsense-placeholder"
+          id="adsense"
           async
           strategy="afterInteractive"
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXX"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2432965833930637"
           crossOrigin="anonymous"
         />
       </body>
