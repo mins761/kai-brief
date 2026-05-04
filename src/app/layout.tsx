@@ -42,6 +42,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          id="adsense"
+          async
+          strategy="afterInteractive"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2432965833930637"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className={inter.className}>
         {children}
         <Script
@@ -57,13 +66,6 @@ export default function RootLayout({
             gtag('config', '${googleAnalyticsId}');
           `}
         </Script>
-        <Script
-          id="adsense"
-          async
-          strategy="afterInteractive"
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2432965833930637"
-          crossOrigin="anonymous"
-        />
       </body>
     </html>
   );
