@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 import { categories, defaultArticles } from '@/lib/articles';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://kai-brief.example.com';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://kai-brief.vercel.app';
   const staticRoutes = ['', '/about', '/privacy', '/contact', ...categories.map((item) => `/${item}`)];
   const articleRoutes = defaultArticles.map((article) => `/article/${article.slug}`);
 

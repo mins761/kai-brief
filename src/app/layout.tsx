@@ -5,7 +5,7 @@ import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://kai-brief.example.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://kai-brief.vercel.app';
 const googleAnalyticsId = 'G-NRH9JSSD9P';
 
 export const metadata: Metadata = {
