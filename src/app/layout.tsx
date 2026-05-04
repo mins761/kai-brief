@@ -6,7 +6,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://kai-brief.vercel.app';
-const googleAnalyticsId = 'G-NRH9JSSD9P';
+const googleAnalyticsId = 'G-9ZBVWR7FZ7';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -51,22 +51,21 @@ export default function RootLayout({
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2432965833930637"
           crossOrigin="anonymous"
         />
-      </head>
-      <body className={inter.className}>
-        {children}
-        <Script
-          id="google-tag-manager"
-          strategy="afterInteractive"
+        <script
+          async
           src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
         />
-        <Script id="google-analytics" strategy="afterInteractive">
+        <script id="google-analytics">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', '${googleAnalyticsId}');
           `}
-        </Script>
+        </script>
+      </head>
+      <body className={inter.className}>
+        {children}
       </body>
     </html>
   );
