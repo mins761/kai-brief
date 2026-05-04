@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kai-brief-lw6qmvyjy-mins761s-projects.vercel.app/sitemap.xml
