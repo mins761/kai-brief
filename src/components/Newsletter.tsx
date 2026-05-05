@@ -12,7 +12,7 @@ export default function Newsletter() {
     const formData = new FormData(event.currentTarget);
     const email = String(formData.get('email') || '');
 
-    const response = await fetch('/api/newsletter', {
+    const response = await fetch('/api/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email })
