@@ -39,7 +39,7 @@ npm run dev
 - `SUPABASE_URL`
 - `SUPABASE_KEY`
 - `OPENROUTER_API_KEY`
-- `OPENROUTER_MODEL` defaults to `google/gemini-2.5-flash-lite`
+- `OPENROUTER_MODEL` defaults to `openai/gpt-oss-120b:free`
 - `UNSPLASH_ACCESS_KEY`
 - `DART_API_KEY`
 - `NEXT_PUBLIC_SITE_URL`
