@@ -29,3 +29,20 @@ CREATE TABLE contacts (
   message TEXT NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+ALTER TABLE emails ENABLE ROW LEVEL SECURITY;
+ALTER TABLE contacts ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow public email signups" ON emails;
+CREATE POLICY "Allow public email signups"
+  ON emails
+  FOR INSERT
+  TO anon
+  WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public contact messages" ON contacts;
+CREATE POLICY "Allow public contact messages"
+  ON contacts
+  FOR INSERT
+  TO anon
+  WITH CHECK (true);
