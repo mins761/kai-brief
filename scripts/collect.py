@@ -48,7 +48,7 @@ SUPABASE_KEY = require_env(
     "NEXT_PUBLIC_SUPABASE_ANON_KEY",
 )
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
-OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "google/gemini-2.5-flash-lite")
+OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "openai/gpt-oss-120b:free")
 UNSPLASH_ACCESS_KEY = optional_env("UNSPLASH_ACCESS_KEY")
 DART_API_KEY = optional_env("DART_API_KEY")
 
