@@ -16,13 +16,19 @@ export async function POST(request: Request) {
   });
 
   if (supabaseError) {
+    if (supabaseError.code === '23505') {
+      return NextResponse.json({ ok: true, alreadySubscribed: true });
+    }
+
+    console.error('Subscribe Supabase error:', supabaseError);
     return NextResponse.json({ error: supabaseError.message }, { status: 500 });
   }
 
   const resendApiKey = process.env.RESEND_API_KEY;
 
   if (!resendApiKey) {
-    return NextResponse.json({ error: 'Resend API key is missing.' }, { status: 500 });
+    console.error('Subscribe Resend error: RESEND_API_KEY is missing.');
+    return NextResponse.json({ ok: true, emailSent: false });
   }
 
   const resend = new Resend(resendApiKey);
@@ -35,8 +41,9 @@ export async function POST(request: Request) {
   });
 
   if (resendError) {
-    return NextResponse.json({ error: resendError.message }, { status: 500 });
+    console.error('Subscribe Resend error:', resendError);
+    return NextResponse.json({ ok: true, emailSent: false });
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, emailSent: true });
 }
