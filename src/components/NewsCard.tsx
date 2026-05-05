@@ -4,14 +4,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import CategoryTag from '@/components/CategoryTag';
-import { categoryImages, formatRelativeTime } from '@/lib/articles';
+import { categoryImages, formatRelativeTime, getArticleImage } from '@/lib/articles';
 import type { Article } from '@/types';
 
 export default function NewsCard({ article, index = 0 }: { article: Article; index?: number }) {
   const ref = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
   const fallbackImage = categoryImages[article.category] || categoryImages.economy;
-  const [imageUrl, setImageUrl] = useState(article.image_url || fallbackImage);
+  const [imageUrl, setImageUrl] = useState(getArticleImage(article));
 
   useEffect(() => {
     const node = ref.current;

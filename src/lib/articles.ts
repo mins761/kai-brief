@@ -37,12 +37,31 @@ export const categoryColors: Record<Category, string> = {
 export const categoryImages: Record<Category, string> = {
   economy: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800',
   ai: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800',
-  culture: 'https://images.unsplash.com/photo-1598387993441-a364f854cfdd?w=800',
+  culture: '/images/fallback-kpop.webp',
   beauty: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800',
   travel: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=800',
   market: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800',
   policy: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=800'
 };
+
+export function getArticleImage(article: Pick<Article, 'category' | 'image_url'>) {
+  const fallbackImage = categoryImages[article.category] || categoryImages.economy;
+
+  if (!article.image_url) {
+    return fallbackImage;
+  }
+
+  if (article.image_url.startsWith('/')) {
+    return article.image_url;
+  }
+
+  try {
+    const imageUrl = new URL(article.image_url);
+    return imageUrl.hostname === 'images.unsplash.com' ? article.image_url : fallbackImage;
+  } catch {
+    return fallbackImage;
+  }
+}
 
 export const defaultArticles: Article[] = [
   {

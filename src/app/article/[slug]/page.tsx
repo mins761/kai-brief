@@ -6,7 +6,7 @@ import CategoryTag from '@/components/CategoryTag';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import NewsCard from '@/components/NewsCard';
-import { categoryImages, getArticleBySlug, getArticles } from '@/lib/articles';
+import { getArticleBySlug, getArticleImage, getArticles } from '@/lib/articles';
 
 export const revalidate = 3600;
 
@@ -16,7 +16,7 @@ export async function generateMetadata({
   params: { slug: string };
 }): Promise<Metadata> {
   const article = await getArticleBySlug(params.slug);
-  const imageUrl = article.image_url || categoryImages[article.category];
+  const imageUrl = getArticleImage(article);
 
   return {
     title: article.title_en,
@@ -38,7 +38,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     (item) => item.slug !== article.slug
   );
   const paragraphs = article.body_en.split(/\n+/).filter(Boolean);
-  const imageUrl = article.image_url || categoryImages[article.category];
+  const imageUrl = getArticleImage(article);
 
   return (
     <>

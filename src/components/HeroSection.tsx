@@ -4,12 +4,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import CategoryTag from '@/components/CategoryTag';
-import { categoryImages, formatRelativeTime } from '@/lib/articles';
+import { categoryImages, formatRelativeTime, getArticleImage } from '@/lib/articles';
 import type { Article } from '@/types';
 
 export default function HeroSection({ article }: { article: Article }) {
   const fallbackImage = categoryImages[article.category] || categoryImages.economy;
-  const [imageUrl, setImageUrl] = useState(article.image_url || fallbackImage);
+  const [imageUrl, setImageUrl] = useState(getArticleImage(article));
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
