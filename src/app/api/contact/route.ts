@@ -8,9 +8,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Name, email, and message are required.' }, { status: 400 });
   }
 
-  const { error } = await supabase.from('contacts').insert({ name, email, message });
+  const { error } = await supabase.from('contacts').insert({
+    name: String(name).trim(),
+    email: String(email).trim().toLowerCase(),
+    message: String(message).trim()
+  });
 
   if (error) {
+    console.error('Contact Supabase error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 

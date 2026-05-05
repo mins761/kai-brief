@@ -4,10 +4,12 @@ import { FormEvent, useState } from 'react';
 
 export default function ContactForm() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('Please try again.');
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus('loading');
+    setErrorMessage('Please try again.');
 
     const formData = new FormData(event.currentTarget);
     const payload = {
@@ -16,14 +18,26 @@ export default function ContactForm() {
       message: String(formData.get('message') || '')
     };
 
-    const response = await fetch('/api/contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json().catch(() => null);
 
-    setStatus(response.ok ? 'success' : 'error');
-    if (response.ok) event.currentTarget.reset();
+      if (!response.ok) {
+        setErrorMessage(data?.error || 'Please try again.');
+        setStatus('error');
+        return;
+      }
+
+      setStatus('success');
+      event.currentTarget.reset();
+    } catch {
+      setErrorMessage('Please check your connection and try again.');
+      setStatus('error');
+    }
   }
 
   return (
@@ -55,7 +69,7 @@ export default function ContactForm() {
         {status === 'loading' ? 'Sending...' : 'Send message'}
       </button>
       {status === 'success' ? <p className="text-sm font-bold text-green-700">Message sent.</p> : null}
-      {status === 'error' ? <p className="text-sm font-bold text-red-700">Please try again.</p> : null}
+      {status === 'error' ? <p className="text-sm font-bold text-red-700">{errorMessage}</p> : null}
     </form>
   );
 }
