@@ -91,6 +91,7 @@ def rewrite_to_english(title: str, summary: str) -> str:
         },
         json={
             "model": OPENROUTER_MODEL,
+            "max_tokens": 800,
             "messages": [
                 {
                     "role": "user",
