@@ -1,13 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { categories, visibleCategories } from '@/lib/articles';
-import { categoryLabelsByLang, copy, type Lang, withLang } from '@/lib/i18n';
+import { categoryLabelsByLang, copy, languageNames, type Lang, withLang } from '@/lib/i18n';
 
 export default function Header({ lang = 'en' }: { lang?: Lang }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const labels = categoryLabelsByLang[lang];
   const text = copy[lang];
@@ -16,11 +17,17 @@ export default function Header({ lang = 'en' }: { lang?: Lang }) {
     pathWithoutJa === '/' ||
     categories.some((category) => pathWithoutJa === `/${category}`) ||
     /^\/article\/[^/]+$/.test(pathWithoutJa);
-  const switchHref = lang === 'ja' ? pathWithoutJa : canSwitchPath ? `/ja${pathname}` : '/ja';
+  const englishHref = pathWithoutJa;
+  const japaneseHref = canSwitchPath ? `/ja${pathWithoutJa === '/' ? '' : pathWithoutJa}` : '/ja';
 
   const scrollToNewsletter = () => {
     setIsOpen(false);
     document.getElementById('newsletter')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const changeLanguage = (nextLang: Lang) => {
+    setIsOpen(false);
+    router.push(nextLang === 'ja' ? japaneseHref : englishHref);
   };
 
   return (
@@ -53,12 +60,18 @@ export default function Header({ lang = 'en' }: { lang?: Lang }) {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <Link
-            href={switchHref}
-            className="rounded-full border border-white/20 px-3 py-2 text-xs font-black uppercase tracking-[0.16em] text-white/75 transition hover:text-white"
+          <label className="sr-only" htmlFor="desktop-language">
+            Language
+          </label>
+          <select
+            id="desktop-language"
+            value={lang}
+            onChange={(event) => changeLanguage(event.target.value as Lang)}
+            className="h-10 rounded-full border border-white/20 bg-kai-navy px-3 text-xs font-black uppercase tracking-[0.14em] text-white outline-none transition hover:border-white/40"
           >
-            {lang === 'ja' ? 'EN' : 'JP'}
-          </Link>
+            <option value="en">{languageNames.en}</option>
+            <option value="ja">{languageNames.ja}</option>
+          </select>
           <button
             onClick={scrollToNewsletter}
             className="rounded-full bg-kai-cyan px-5 py-2 text-sm font-bold text-kai-navy transition hover:-translate-y-0.5 hover:bg-white"
@@ -89,13 +102,17 @@ export default function Header({ lang = 'en' }: { lang?: Lang }) {
                 {labels[category]}
               </Link>
             ))}
-            <Link
-              href={switchHref}
-              onClick={() => setIsOpen(false)}
-              className="text-sm font-semibold uppercase tracking-[0.18em] text-white/80"
+            <label className="text-xs font-black uppercase tracking-[0.18em] text-white/45">
+              Language
+            </label>
+            <select
+              value={lang}
+              onChange={(event) => changeLanguage(event.target.value as Lang)}
+              className="min-h-11 rounded-lg border border-white/15 bg-kai-navy px-3 text-sm font-bold text-white outline-none"
             >
-              {lang === 'ja' ? 'English' : '日本語'}
-            </Link>
+              <option value="en">{languageNames.en}</option>
+              <option value="ja">{languageNames.ja}</option>
+            </select>
             <button
               onClick={scrollToNewsletter}
               className="mt-2 rounded-full bg-kai-cyan px-5 py-2 text-left text-sm font-bold text-kai-navy"
