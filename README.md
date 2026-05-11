@@ -56,6 +56,12 @@ pip install feedparser requests supabase python-dotenv
 python scripts/collect.py
 ```
 
+To translate existing English-only articles for the Japanese pages, add the Japanese columns in Supabase and run:
+
+```bash
+python scripts/backfill_japanese.py
+```
+
 If Unsplash returns `401`, confirm the GitHub secret `UNSPLASH_ACCESS_KEY` contains the Unsplash application Access Key, not the Secret Key or an OAuth token.
 
 If Supabase reports that `articles.image_url` is missing, run this in the Supabase SQL editor and then reload the schema cache if needed:
