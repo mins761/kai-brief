@@ -5,6 +5,9 @@ export type Article = {
   title_en: string;
   body_en: string;
   summary_en: string;
+  title_ja?: string | null;
+  body_ja?: string | null;
+  summary_ja?: string | null;
   category: Category;
   source_url: string;
   source_name: string;

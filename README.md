@@ -48,6 +48,7 @@ npm run dev
 ## Collector
 
 The collector reads Korean RSS feeds and DART disclosures, rewrites new items in English through OpenRouter, and inserts them into Supabase.
+It also creates Japanese `title_ja`, `body_ja`, and `summary_ja` fields for the `/ja` pages.
 When `TMDB_API_KEY` is present, culture and TV-related items include TMDB season context with separate `season_number` and episode counts.
 
 ```bash

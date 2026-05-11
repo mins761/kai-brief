@@ -1,9 +1,11 @@
 'use client';
 
 import { FormEvent, useState } from 'react';
+import { copy, type Lang } from '@/lib/i18n';
 
-export default function Newsletter() {
+export default function Newsletter({ lang = 'en' }: { lang?: Lang }) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const text = copy[lang];
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -26,10 +28,10 @@ export default function Newsletter() {
     <section id="newsletter" className="bg-kai-navy px-4 py-16 text-white sm:px-6 lg:px-8">
       <div className="mx-auto max-w-3xl text-center">
         <p className="text-sm font-black uppercase tracking-[0.28em] text-kai-cyan">
-          Newsletter
+          {text.newsletter}
         </p>
         <h2 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">
-          The Korea AI economy, minus the fog.
+          {text.newsletterTitle}
         </h2>
         <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-3 sm:flex-row">
           <input
@@ -44,14 +46,14 @@ export default function Newsletter() {
             disabled={status === 'loading'}
             className="min-h-12 rounded-full bg-kai-cyan px-7 font-black text-kai-navy transition hover:bg-white disabled:opacity-70"
           >
-            {status === 'loading' ? 'Subscribing...' : 'Subscribe'}
+            {status === 'loading' ? text.subscribing : text.subscribe}
           </button>
         </form>
         {status === 'success' ? (
-          <p className="mt-4 text-sm text-kai-cyan">You&apos;re on the list.</p>
+          <p className="mt-4 text-sm text-kai-cyan">{text.success}</p>
         ) : null}
         {status === 'error' ? (
-          <p className="mt-4 text-sm text-red-200">Something went wrong. Please try again.</p>
+          <p className="mt-4 text-sm text-red-200">{text.error}</p>
         ) : null}
       </div>
     </section>

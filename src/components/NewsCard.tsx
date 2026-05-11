@@ -5,13 +5,23 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import CategoryTag from '@/components/CategoryTag';
 import { categoryImages, formatRelativeTime, getArticleImage } from '@/lib/articles';
+import { getLocalizedArticle, type Lang, withLang } from '@/lib/i18n';
 import type { Article } from '@/types';
 
-export default function NewsCard({ article, index = 0 }: { article: Article; index?: number }) {
+export default function NewsCard({
+  article,
+  index = 0,
+  lang = 'en'
+}: {
+  article: Article;
+  index?: number;
+  lang?: Lang;
+}) {
   const ref = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
   const fallbackImage = categoryImages[article.category] || categoryImages.economy;
   const [imageUrl, setImageUrl] = useState(getArticleImage(article));
+  const localized = getLocalizedArticle(article, lang);
 
   useEffect(() => {
     const node = ref.current;
@@ -39,7 +49,7 @@ export default function NewsCard({ article, index = 0 }: { article: Article; ind
       }`}
       style={{ animationDelay: `${Math.min(index, 8) * 0.1}s` }}
     >
-      <Link href={`/article/${article.slug}`} className="flex h-full flex-col">
+      <Link href={withLang(`/article/${article.slug}`, lang)} className="flex h-full flex-col">
         <div className="relative h-44 bg-kai-gray">
           <Image
             src={imageUrl}
@@ -53,12 +63,12 @@ export default function NewsCard({ article, index = 0 }: { article: Article; ind
         </div>
 
         <div className="flex flex-1 flex-col gap-4 p-5">
-          <CategoryTag category={article.category} />
+          <CategoryTag category={article.category} lang={lang} />
           <div className="space-y-3">
             <h2 className="line-clamp-2 text-lg font-black leading-snug text-kai-navy">
-              {article.title_en}
+              {localized.title}
             </h2>
-            <p className="line-clamp-3 text-sm leading-6 text-zinc-600">{article.summary_en}</p>
+            <p className="line-clamp-3 text-sm leading-6 text-zinc-600">{localized.summary}</p>
           </div>
           <div className="mt-auto flex items-center justify-between pt-2 text-xs font-semibold text-zinc-500">
             <span>

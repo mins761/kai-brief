@@ -100,6 +100,8 @@ def rewrite_to_english(title: str, summary: str, tmdb_context: str = "") -> str:
 You are an English financial journalist covering Korean economy and AI.
 Rewrite into original English article for global readers.
 150-200 words, add global context. Factual only.
+Also create a natural Japanese version for Japanese readers.
+Japanese body should be 150-220 Japanese characters or 2-3 concise paragraphs.
 
 For culture reviews or entertainment coverage:
 - Be honest and balanced.
@@ -122,7 +124,7 @@ Category guidance:
 - market: finance, stocks, bonds, currencies
 
 Return JSON only:
-{{"title":"...","body":"...","summary":"...","category":"economy|ai|policy|market|culture|beauty|travel","tags":["tag1","tag2"]}}
+{{"title":"...","body":"...","summary":"...","title_ja":"...","body_ja":"...","summary_ja":"...","category":"economy|ai|policy|market|culture|beauty|travel","tags":["tag1","tag2"]}}
 """.strip(),
                 }
             ],
@@ -340,6 +342,9 @@ def insert_article(item: dict[str, str], rewritten: dict[str, Any]) -> None:
         "title_en": rewritten["title"],
         "body_en": rewritten["body"],
         "summary_en": rewritten["summary"],
+        "title_ja": rewritten.get("title_ja"),
+        "body_ja": rewritten.get("body_ja"),
+        "summary_ja": rewritten.get("summary_ja"),
         "category": rewritten["category"],
         "source_url": source_url,
         "source_name": item["source_name"],
@@ -351,6 +356,14 @@ def insert_article(item: dict[str, str], rewritten: dict[str, Any]) -> None:
     try:
         supabase.table("articles").insert(payload).execute()
     except Exception as exc:
+        if any(column in str(exc) for column in ["title_ja", "body_ja", "summary_ja"]):
+            print("Japanese article columns are unavailable; inserting article without Japanese fields.")
+            payload.pop("title_ja", None)
+            payload.pop("body_ja", None)
+            payload.pop("summary_ja", None)
+            supabase.table("articles").insert(payload).execute()
+            return
+
         if "image_url" not in str(exc):
             raise
 

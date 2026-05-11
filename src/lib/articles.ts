@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { categoryLabelsByLang } from '@/lib/i18n';
 import type { Article, Category } from '@/types';
 
 export const categories: Category[] = [
@@ -14,15 +15,7 @@ export const categories: Category[] = [
 
 export const visibleCategories: Category[] = ['economy', 'ai', 'culture', 'beauty', 'travel'];
 
-export const categoryLabels: Record<Category, string> = {
-  economy: 'Economy',
-  ai: 'AI',
-  policy: 'Policy',
-  market: 'Market',
-  culture: 'Culture',
-  beauty: 'Beauty',
-  travel: 'Travel'
-};
+export const categoryLabels = categoryLabelsByLang.en;
 
 export const categoryColors: Record<Category, string> = {
   economy: 'bg-blue-100 text-blue-700',
@@ -67,10 +60,15 @@ export const defaultArticles: Article[] = [
   {
     id: 'seed-1',
     title_en: 'Korea sharpens its AI ambitions as chips and policy converge',
+    title_ja: '韓国、半導体と政策でAI戦略を加速',
     body_en:
       'South Korea is moving to align industrial policy, semiconductor investment, and artificial intelligence adoption as global demand for compute infrastructure accelerates. The effort reflects a wider race among advanced economies to secure model development capacity, cloud infrastructure, and high-end memory supply chains. For global readers, Korea is important because it sits at the center of the memory-chip market and has an export economy that responds quickly to technology cycles.',
+    body_ja:
+      '韓国は、計算インフラへの世界的な需要が高まるなか、産業政策、半導体投資、人工知能の導入を一体的に進めようとしている。この動きは、先進国がモデル開発能力、クラウド基盤、高性能メモリーの供給網を確保しようとする競争の一部だ。韓国はメモリーチップ市場の中心にあり、技術サイクルに敏感な輸出経済を持つため、世界の読者にとって重要な観測対象となっている。',
     summary_en:
       'Korea is aligning AI policy and chip investment as global compute demand accelerates.',
+    summary_ja:
+      '韓国は世界的な計算需要の拡大に合わせ、AI政策と半導体投資を連動させている。',
     category: 'ai',
     source_url: 'https://example.com/korea-ai-chips',
     source_name: 'KAI Brief Desk',
@@ -83,10 +81,15 @@ export const defaultArticles: Article[] = [
   {
     id: 'seed-2',
     title_en: 'Export recovery keeps Korea watchers focused on memory prices',
+    title_ja: '輸出回復で韓国市場の焦点はメモリー価格に',
     body_en:
       'Korean export data continues to draw attention from investors tracking the turn in the global electronics cycle. Memory-chip pricing, China demand, and currency pressure remain central variables for companies and policymakers. A sustained recovery would support corporate earnings, but it also raises questions about inflation, rates, and the resilience of global demand.',
+    body_ja:
+      '韓国の輸出統計は、世界の電子機器サイクルの転換点を追う投資家から引き続き注目されている。メモリーチップ価格、中国需要、為替圧力は、企業と政策当局にとって重要な変数だ。回復が続けば企業収益を支える一方、インフレ、金利、世界需要の底堅さをめぐる問いも浮上する。',
     summary_en:
       'Korea export momentum is tied closely to memory-chip pricing and global electronics demand.',
+    summary_ja:
+      '韓国の輸出回復は、メモリーチップ価格と世界の電子機器需要に大きく左右されている。',
     category: 'economy',
     source_url: 'https://example.com/korea-export-memory',
     source_name: 'KAI Brief Desk',

@@ -3,6 +3,9 @@ CREATE TABLE articles (
   title_en TEXT NOT NULL,
   body_en TEXT NOT NULL,
   summary_en TEXT,
+  title_ja TEXT,
+  body_ja TEXT,
+  summary_ja TEXT,
   category TEXT DEFAULT 'economy',
   source_url TEXT UNIQUE,
   source_name TEXT,
@@ -15,6 +18,9 @@ CREATE TABLE articles (
 );
 
 ALTER TABLE articles ADD COLUMN IF NOT EXISTS image_url TEXT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS title_ja TEXT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS body_ja TEXT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS summary_ja TEXT;
 
 CREATE TABLE emails (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
