@@ -42,11 +42,13 @@ npm run dev
 - `OPENROUTER_MODEL` defaults to `openai/gpt-oss-120b:free`
 - `UNSPLASH_ACCESS_KEY`
 - `DART_API_KEY`
+- `TMDB_API_KEY`
 - `NEXT_PUBLIC_SITE_URL`
 
 ## Collector
 
 The collector reads Korean RSS feeds and DART disclosures, rewrites new items in English through OpenRouter, and inserts them into Supabase.
+When `TMDB_API_KEY` is present, culture and TV-related items include TMDB season context with separate `season_number` and episode counts.
 
 ```bash
 pip install feedparser requests supabase python-dotenv
@@ -69,6 +71,7 @@ GitHub Actions runs `.github/workflows/collect.yml` every two hours. Add these r
 - `SUPABASE_URL`
 - `SUPABASE_KEY`
 - `DART_API_KEY`
+- `TMDB_API_KEY`
 
 ## Deployment
 

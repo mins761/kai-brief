@@ -13,6 +13,7 @@ jobs:
       OPENROUTER_MODEL: openai/gpt-oss-120b:free
       UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
       DART_API_KEY: ${{ secrets.DART_API_KEY }}
+      TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
@@ -41,6 +42,7 @@ jobs:
           OPENROUTER_MODEL: openai/gpt-oss-120b:free
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           DART_API_KEY: ${{ secrets.DART_API_KEY }}
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}

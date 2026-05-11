@@ -51,6 +51,7 @@ OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "openai/gpt-oss-120b:free")
 UNSPLASH_ACCESS_KEY = optional_env("UNSPLASH_ACCESS_KEY")
 DART_API_KEY = optional_env("DART_API_KEY")
+TMDB_API_KEY = optional_env("TMDB_API_KEY")
 
 if not OPENROUTER_API_KEY:
     raise RuntimeError("OPENROUTER_API_KEY is required")
@@ -73,7 +74,7 @@ def is_duplicate(source_url: str) -> bool:
     return bool(result.data)
 
 
-def rewrite_to_english(title: str, summary: str) -> str:
+def rewrite_to_english(title: str, summary: str, tmdb_context: str = "") -> str:
     print(f"API Key exists: {bool(OPENROUTER_API_KEY)}")
     print(
         "API Key prefix: "
@@ -100,8 +101,16 @@ You are an English financial journalist covering Korean economy and AI.
 Rewrite into original English article for global readers.
 150-200 words, add global context. Factual only.
 
+For culture reviews or entertainment coverage:
+- Be honest and balanced.
+- Include both strengths AND weaknesses.
+- Do NOT be overly promotional.
+- Mention season/episode count if relevant.
+- When TMDB season data is provided, keep each season separate and use the exact season_number values.
+
 Korean Title: {title}
 Korean Summary: {summary}
+TMDB Season Context: {tmdb_context or "Not available"}
 
 Category guidance:
 - culture: K-Pop, K-Drama, Korean entertainment
@@ -139,7 +148,8 @@ def parse_rewrite(raw_text: str) -> dict[str, Any]:
 
 
 def rewrite_article(title: str, body: str) -> dict[str, Any]:
-    return parse_rewrite(rewrite_to_english(title, body))
+    tmdb_context = get_tmdb_season_context(title, body)
+    return parse_rewrite(rewrite_to_english(title, body, tmdb_context))
 
 
 def infer_category(title: str, summary: str) -> str | None:
@@ -154,6 +164,90 @@ def infer_category(title: str, summary: str) -> str | None:
         if any(keyword in text for keyword in keywords):
             return category
     return None
+
+
+def should_fetch_tmdb(title: str, summary: str) -> bool:
+    if not TMDB_API_KEY:
+        return False
+
+    text = f"{title} {summary}".lower()
+    keywords = [
+        "k-drama",
+        "kdrama",
+        "drama",
+        "series",
+        "season",
+        "episode",
+        "netflix",
+        "disney+",
+        "tvn",
+    ]
+    return infer_category(title, summary) == "culture" or any(
+        keyword in text for keyword in keywords
+    )
+
+
+def format_tmdb_seasons(show: dict[str, Any]) -> str:
+    seasons = show.get("seasons", [])
+    if not seasons:
+        return ""
+
+    lines = [
+        f"TV show: {show.get('name') or show.get('original_name', 'Unknown')}",
+        "Seasons:",
+    ]
+    for season in sorted(seasons, key=lambda item: item.get("season_number", 0)):
+        season_number = season.get("season_number")
+        episode_count = season.get("episode_count")
+        name = season.get("name") or f"Season {season_number}"
+        air_date = season.get("air_date") or "unknown air date"
+        lines.append(
+            "- "
+            f"season_number={season_number}; "
+            f"name={name}; "
+            f"episode_count={episode_count}; "
+            f"air_date={air_date}"
+        )
+    return "\n".join(lines)
+
+
+def get_tmdb_season_context(title: str, summary: str) -> str:
+    if not should_fetch_tmdb(title, summary):
+        return ""
+
+    query = title.split(":")[0].strip()
+    if not query:
+        return ""
+
+    search_response = req.get(
+        "https://api.themoviedb.org/3/search/tv",
+        params={"api_key": TMDB_API_KEY, "query": query, "include_adult": "false"},
+        timeout=20,
+    )
+    if not search_response.ok:
+        print(f"TMDB search status: {search_response.status_code}")
+        print(f"TMDB search response: {search_response.text[:300]}")
+        return ""
+
+    results = search_response.json().get("results", [])
+    if not results:
+        return ""
+
+    show_id = results[0].get("id")
+    if not show_id:
+        return ""
+
+    detail_response = req.get(
+        f"https://api.themoviedb.org/3/tv/{show_id}",
+        params={"api_key": TMDB_API_KEY},
+        timeout=20,
+    )
+    if not detail_response.ok:
+        print(f"TMDB detail status: {detail_response.status_code}")
+        print(f"TMDB detail response: {detail_response.text[:300]}")
+        return ""
+
+    return format_tmdb_seasons(detail_response.json())
 
 
 def get_unsplash_image(keyword: str) -> str | None:
