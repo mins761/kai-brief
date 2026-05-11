@@ -1,0 +1,41 @@
+name: Backfill Japanese Articles
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: Number of recent articles to scan
+        required: false
+        default: '50'
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    env:
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      OPENROUTER_MODEL: openai/gpt-oss-120b:free
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      BACKFILL_LIMIT: ${{ inputs.limit }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests supabase python-dotenv
+
+      - name: Validate required secrets
+        run: |
+          python -c "import os, sys; missing=[]; missing += [] if os.getenv('OPENROUTER_API_KEY') else ['OPENROUTER_API_KEY']; missing += [] if (os.getenv('SUPABASE_URL') or os.getenv('NEXT_PUBLIC_SUPABASE_URL')) else ['SUPABASE_URL or NEXT_PUBLIC_SUPABASE_URL']; missing += [] if (os.getenv('SUPABASE_KEY') or os.getenv('SUPABASE_ANON_KEY') or os.getenv('NEXT_PUBLIC_SUPABASE_ANON_KEY')) else ['SUPABASE_KEY or SUPABASE_ANON_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY']; print('Missing required secrets: ' + ', '.join(missing)) if missing else print('Required secrets are configured.'); sys.exit(1 if missing else 0)"
+
+      - name: Backfill Japanese fields
+        run: python scripts/backfill_japanese.py
