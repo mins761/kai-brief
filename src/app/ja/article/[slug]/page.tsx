@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import ArticleBody from '@/components/ArticleBody';
+import ArticleSidebar from '@/components/ArticleSidebar';
 import CategoryTag from '@/components/CategoryTag';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
@@ -45,69 +46,74 @@ export default async function JapaneseArticlePage({ params }: { params: { slug: 
   const related = (await getArticles(article.category, 4)).filter(
     (item) => item.slug !== article.slug
   );
+  const topStories = await getArticles(undefined, 8);
   const imageUrl = getArticleImage(article);
 
   return (
     <>
       <Header lang="ja" />
       <main className="bg-white">
-        <article className="mx-auto max-w-[720px] px-4 py-12 sm:px-6">
-          <div className="space-y-5">
-            <CategoryTag category={article.category} lang="ja" />
-            <time className="block text-sm font-bold text-zinc-500">
-              {formatDate(article.published_at, 'ja')}
-            </time>
-            <h1 className="text-4xl font-black leading-tight tracking-tight text-kai-navy">
-              {localized.title}
-            </h1>
-            <p className="text-xl leading-8 text-zinc-700">{localized.summary}</p>
-            <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-bold text-zinc-500">
-              <span>KAI Brief Desk</span>
-              <span>
-                {copy.ja.source}:{' '}
-                <a href={article.source_url} className="text-kai-navy underline">
-                  {article.source_name}
-                </a>
-              </span>
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[minmax(0,720px)_320px] lg:items-start lg:px-8 xl:grid-cols-[minmax(0,760px)_340px]">
+          <article className="min-w-0">
+            <div className="space-y-5">
+              <CategoryTag category={article.category} lang="ja" />
+              <time className="block text-sm font-bold text-zinc-500">
+                {formatDate(article.published_at, 'ja')}
+              </time>
+              <h1 className="text-4xl font-black leading-tight tracking-tight text-kai-navy">
+                {localized.title}
+              </h1>
+              <p className="text-xl leading-8 text-zinc-700">{localized.summary}</p>
+              <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-bold text-zinc-500">
+                <span>KAI Brief Desk</span>
+                <span>
+                  {copy.ja.source}:{' '}
+                  <a href={article.source_url} className="text-kai-navy underline">
+                    {article.source_name}
+                  </a>
+                </span>
+              </div>
             </div>
-          </div>
 
-          <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-3xl bg-kai-gray shadow-card">
-            <Image
-              src={imageUrl}
-              alt=""
-              fill
-              priority
-              sizes="(min-width: 768px) 720px, 100vw"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-kai-navy/20 to-transparent" />
-          </div>
+            <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-3xl bg-kai-gray shadow-card">
+              <Image
+                src={imageUrl}
+                alt=""
+                fill
+                priority
+                sizes="(min-width: 1024px) 760px, (min-width: 768px) 720px, 100vw"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-kai-navy/20 to-transparent" />
+            </div>
 
-          <hr className="my-8 border-kai-border" />
+            <hr className="my-8 border-kai-border" />
 
-          <div className="mb-8 rounded-lg border border-kai-border bg-kai-gray px-5 py-4 text-sm leading-6 text-zinc-600">
-            KAI Briefは韓国語の情報源と公開情報をもとに、海外読者に必要な背景を補って
-            伝えます。確認のため、元記事へのリンクを上部に掲載しています。
-          </div>
+            <div className="mb-8 rounded-lg border border-kai-border bg-kai-gray px-5 py-4 text-sm leading-6 text-zinc-600">
+              KAI Brief covers Korean source material with added context for readers outside Korea.
+              The original source link is provided above for verification.
+            </div>
 
-          <ArticleBody body={localized.body} adSlotId="ja-article-ad-slot" />
+            <ArticleBody body={localized.body} adSlotId="ja-article-ad-slot" />
 
-          <div className="mt-10 flex flex-wrap gap-2">
-            {article.tags?.map((tag) => (
-              <span key={tag} className="rounded-full bg-kai-gray px-3 py-1 text-sm font-bold">
-                #{tag}
-              </span>
-            ))}
-          </div>
+            <div className="mt-10 flex flex-wrap gap-2">
+              {article.tags?.map((tag) => (
+                <span key={tag} className="rounded-full bg-kai-gray px-3 py-1 text-sm font-bold">
+                  #{tag}
+                </span>
+              ))}
+            </div>
 
-          <Link
-            href={withLang('/', 'ja')}
-            className="mt-10 inline-flex rounded-full border border-kai-border px-5 py-2 text-sm font-black text-kai-navy transition hover:bg-kai-gray"
-          >
-            {copy.ja.back}
-          </Link>
-        </article>
+            <Link
+              href={withLang('/', 'ja')}
+              className="mt-10 inline-flex rounded-full border border-kai-border px-5 py-2 text-sm font-black text-kai-navy transition hover:bg-kai-gray"
+            >
+              {copy.ja.back}
+            </Link>
+          </article>
+
+          <ArticleSidebar articles={topStories} currentSlug={article.slug} lang="ja" />
+        </div>
 
         <section className="mx-auto max-w-7xl px-4 pb-14 sm:px-6 lg:px-8">
           <h2 className="mb-5 text-2xl font-black text-kai-navy">{copy.ja.related}</h2>
