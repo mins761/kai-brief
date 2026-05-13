@@ -100,6 +100,7 @@ def rewrite_to_english(title: str, summary: str, tmdb_context: str = "") -> str:
 You are an English financial journalist covering Korean economy and AI.
 Rewrite into original English article for global readers.
 150-200 words, add global context. Factual only.
+Vary sentence length on purpose. Mix short and longer sentences, and avoid overly rigid list-style prose.
 Also create a natural Japanese version for Japanese readers.
 Japanese body should be 150-220 Japanese characters or 2-3 concise paragraphs.
 
