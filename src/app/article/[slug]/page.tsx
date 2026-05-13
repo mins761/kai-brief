@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import AdBanner from '@/components/AdBanner';
+import ArticleBody from '@/components/ArticleBody';
 import CategoryTag from '@/components/CategoryTag';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
@@ -37,7 +37,6 @@ export default async function ArticlePage({ params }: { params: { slug: string }
   const related = (await getArticles(article.category, 4)).filter(
     (item) => item.slug !== article.slug
   );
-  const paragraphs = article.body_en.split(/\n+/).filter(Boolean);
   const imageUrl = getArticleImage(article);
 
   return (
@@ -55,12 +54,16 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             <h1 className="text-4xl font-black leading-tight tracking-tight text-kai-navy">
               {article.title_en}
             </h1>
-            <p className="text-sm text-zinc-500">
-              Source:{' '}
-              <a href={article.source_url} className="font-bold text-kai-navy underline">
-                {article.source_name}
-              </a>
-            </p>
+            <p className="text-xl leading-8 text-zinc-700">{article.summary_en}</p>
+            <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-bold text-zinc-500">
+              <span>By KAI Brief Desk</span>
+              <span>
+                Source:{' '}
+                <a href={article.source_url} className="text-kai-navy underline">
+                  {article.source_name}
+                </a>
+              </span>
+            </div>
           </div>
 
           <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-3xl bg-kai-gray shadow-card">
@@ -77,18 +80,13 @@ export default async function ArticlePage({ params }: { params: { slug: string }
 
           <hr className="my-8 border-kai-border" />
 
-          <div className="space-y-7 text-lg leading-[1.8] text-zinc-800">
-            {paragraphs.map((paragraph, index) => (
-              <div key={paragraph.slice(0, 24)}>
-                <p>{paragraph}</p>
-                {index === 2 ? (
-                  <div className="my-8">
-                    <AdBanner id="article-ad-slot" />
-                  </div>
-                ) : null}
-              </div>
-            ))}
+          <div className="mb-8 rounded-lg border border-kai-border bg-kai-gray px-5 py-4 text-sm leading-6 text-zinc-600">
+            KAI Brief follows Korean source material and public context to explain why each story
+            matters for international readers. Links to the original source are provided above for
+            verification.
           </div>
+
+          <ArticleBody body={article.body_en} adSlotId="article-ad-slot" />
 
           <div className="mt-10 flex flex-wrap gap-2">
             {article.tags?.map((tag) => (

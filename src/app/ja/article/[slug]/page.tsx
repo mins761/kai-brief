@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import AdBanner from '@/components/AdBanner';
+import ArticleBody from '@/components/ArticleBody';
 import CategoryTag from '@/components/CategoryTag';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
@@ -45,7 +45,6 @@ export default async function JapaneseArticlePage({ params }: { params: { slug: 
   const related = (await getArticles(article.category, 4)).filter(
     (item) => item.slug !== article.slug
   );
-  const paragraphs = localized.body.split(/\n+/).filter(Boolean);
   const imageUrl = getArticleImage(article);
 
   return (
@@ -61,12 +60,16 @@ export default async function JapaneseArticlePage({ params }: { params: { slug: 
             <h1 className="text-4xl font-black leading-tight tracking-tight text-kai-navy">
               {localized.title}
             </h1>
-            <p className="text-sm text-zinc-500">
-              {copy.ja.source}:{' '}
-              <a href={article.source_url} className="font-bold text-kai-navy underline">
-                {article.source_name}
-              </a>
-            </p>
+            <p className="text-xl leading-8 text-zinc-700">{localized.summary}</p>
+            <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-bold text-zinc-500">
+              <span>KAI Brief Desk</span>
+              <span>
+                {copy.ja.source}:{' '}
+                <a href={article.source_url} className="text-kai-navy underline">
+                  {article.source_name}
+                </a>
+              </span>
+            </div>
           </div>
 
           <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-3xl bg-kai-gray shadow-card">
@@ -83,18 +86,12 @@ export default async function JapaneseArticlePage({ params }: { params: { slug: 
 
           <hr className="my-8 border-kai-border" />
 
-          <div className="space-y-7 text-lg leading-[1.9] text-zinc-800">
-            {paragraphs.map((paragraph, index) => (
-              <div key={paragraph.slice(0, 24)}>
-                <p>{paragraph}</p>
-                {index === 2 ? (
-                  <div className="my-8">
-                    <AdBanner id="ja-article-ad-slot" />
-                  </div>
-                ) : null}
-              </div>
-            ))}
+          <div className="mb-8 rounded-lg border border-kai-border bg-kai-gray px-5 py-4 text-sm leading-6 text-zinc-600">
+            KAI Briefは韓国語の情報源と公開情報をもとに、海外読者に必要な背景を補って
+            伝えます。確認のため、元記事へのリンクを上部に掲載しています。
           </div>
+
+          <ArticleBody body={localized.body} adSlotId="ja-article-ad-slot" />
 
           <div className="mt-10 flex flex-wrap gap-2">
             {article.tags?.map((tag) => (

@@ -92,17 +92,26 @@ def rewrite_to_english(title: str, summary: str, tmdb_context: str = "") -> str:
         },
         json={
             "model": OPENROUTER_MODEL,
-            "max_tokens": 800,
+            "max_tokens": 2600,
             "messages": [
                 {
                     "role": "user",
                     "content": f"""
 You are an English financial journalist covering Korean economy and AI.
-Rewrite into original English article for global readers.
-150-200 words, add global context. Factual only.
+Rewrite the source material into an original, useful KAI Brief article for global readers.
+Write 650-900 English words with enough context for a standalone publisher page.
+Do not copy the source wording. Do not invent facts, quotes, numbers, dates, or claims that are not supported by the source material or the provided context.
+Make the article analytical and helpful, not a thin rewrite.
+Use Markdown-style section headings inside body:
+- Start with a strong 2-3 paragraph news lead.
+- Add 3-5 H2 sections using "##".
+- Include at least one short bullet list only when it genuinely helps the reader.
+- Include a "## What to watch next" section near the end.
 Vary sentence length on purpose. Mix short and longer sentences, and avoid overly rigid list-style prose.
+Explain technical, policy, financial, or entertainment-industry terms in plain language when needed.
+Keep a calm editorial voice. Avoid hype, clickbait, promotional language, and generic AI-sounding phrases.
 Also create a natural Japanese version for Japanese readers.
-Japanese body should be 150-220 Japanese characters or 2-3 concise paragraphs.
+Japanese body should be 500-800 Japanese characters with short paragraphs and clear context.
 
 For culture reviews or entertainment coverage:
 - Be honest and balanced.
