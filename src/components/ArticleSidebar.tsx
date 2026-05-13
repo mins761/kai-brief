@@ -29,6 +29,7 @@ export default function ArticleSidebar({
 }) {
   const topStories = articles.filter((article) => article.slug !== currentSlug).slice(0, 5);
   const [leadStory, ...secondaryStories] = topStories;
+  const showAdPlaceholders = process.env.NEXT_PUBLIC_SHOW_AD_PLACEHOLDERS === 'true';
 
   if (!leadStory) {
     return null;
@@ -94,15 +95,17 @@ export default function ArticleSidebar({
         </div>
       </section>
 
-      <section className="mt-8 border-t-2 border-kai-navy pt-3">
-        <h2 className="text-base font-black tracking-tight text-kai-navy">{copy.interesting}</h2>
-        <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-400">
-          {copy.adLabel}
-        </p>
-        <div className="mt-4">
-          <AdBanner id={lang === 'ja' ? 'ja-sidebar-ad-slot' : 'sidebar-ad-slot'} />
-        </div>
-      </section>
+      {showAdPlaceholders ? (
+        <section className="mt-8 border-t-2 border-kai-navy pt-3">
+          <h2 className="text-base font-black tracking-tight text-kai-navy">{copy.interesting}</h2>
+          <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-400">
+            {copy.adLabel}
+          </p>
+          <div className="mt-4">
+            <AdBanner id={lang === 'ja' ? 'ja-sidebar-ad-slot' : 'sidebar-ad-slot'} />
+          </div>
+        </section>
+      ) : null}
     </aside>
   );
 }

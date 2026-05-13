@@ -33,6 +33,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: siteUrl
   },
+  icons: {
+    icon: '/favicon.ico'
+  },
   other: {
     'google-adsense-account': 'ca-pub-2432965833930637'
   }
@@ -45,26 +48,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <script
+      <body className={inter.className}>
+        <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2432965833930637"
           crossOrigin="anonymous"
+          strategy="afterInteractive"
         />
-        <script
+        <Script
           async
           src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
+          strategy="afterInteractive"
         />
-        <script id="google-analytics">
+        <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', '${googleAnalyticsId}');
           `}
-        </script>
-      </head>
-      <body className={inter.className}>
+        </Script>
         {children}
       </body>
     </html>

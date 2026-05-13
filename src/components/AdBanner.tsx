@@ -1,4 +1,8 @@
 export default function AdBanner({ id = 'ad-slot-1' }: { id?: string }) {
+  if (process.env.NEXT_PUBLIC_SHOW_AD_PLACEHOLDERS !== 'true') {
+    return null;
+  }
+
   return (
     <div
       id={id}

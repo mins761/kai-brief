@@ -56,6 +56,7 @@ export default function ArticleBody({
 }) {
   const blocks = parseArticleBody(body);
   let paragraphCount = 0;
+  const showAdPlaceholders = process.env.NEXT_PUBLIC_SHOW_AD_PLACEHOLDERS === 'true';
 
   return (
     <div className="space-y-7 text-lg leading-[1.85] text-zinc-800">
@@ -97,7 +98,7 @@ export default function ArticleBody({
         return (
           <div key={`${block.type}-${index}`}>
             <p>{block.text}</p>
-            {paragraphCount === 3 ? (
+            {showAdPlaceholders && paragraphCount === 3 ? (
               <div className="my-8">
                 <AdBanner id={adSlotId} />
               </div>
