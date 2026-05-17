@@ -68,9 +68,24 @@ class CollectTweetingTests(unittest.TestCase):
         self.assertEqual(len(calls), 1)
         text = calls[0]["text"]
         self.assertLessEqual(len(text), 280)
-        self.assertIn("🤖 Korean AI chip startup raises funding", text)
+        self.assertTrue(text.startswith("\U0001f916 Korean AI chip startup raises funding"))
         self.assertIn("https://kai-brief.vercel.app/article/abc123", text)
         self.assertIn("#Korea #KAIBrief #Ai", text)
+        self.assertIs(calls[0]["user_auth"], True)
+
+    def test_x_credential_report_masks_secret_values(self):
+        collect = self.load_collect()
+        collect.os.environ["X_API_KEY"] = "raw-api-key"
+        collect.os.environ["X_API_SECRET"] = "raw-api-secret"
+        collect.os.environ["X_ACCESS_TOKEN"] = "raw-access-token"
+        collect.os.environ["X_ACCESS_TOKEN_SECRET"] = "raw-access-token-secret"
+
+        report = collect.x_credential_report()
+
+        self.assertIn("X_API_KEY=set len=11 sha256=", report)
+        self.assertIn("X_ACCESS_TOKEN_SECRET=set len=23 sha256=", report)
+        self.assertNotIn("raw-api-key", report)
+        self.assertNotIn("raw-access-token-secret", report)
 
     def test_main_tweets_only_after_successful_insert_for_non_duplicates(self):
         collect = self.load_collect()

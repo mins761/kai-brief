@@ -51,6 +51,27 @@ def safe_print(message: str) -> None:
         print(message.encode(encoding, errors="replace").decode(encoding))
 
 
+def credential_fingerprint(name: str) -> str:
+    value = os.environ.get(name, "")
+    if not value:
+        return f"{name}=MISSING"
+
+    digest = hashlib.sha256(value.encode("utf-8")).hexdigest()[:10]
+    return f"{name}=set len={len(value)} sha256={digest}"
+
+
+def x_credential_report() -> str:
+    names = [
+        "X_API_KEY",
+        "X_API_SECRET",
+        "X_ACCESS_TOKEN",
+        "X_ACCESS_TOKEN_SECRET",
+    ]
+    return "X credential check: " + ", ".join(
+        credential_fingerprint(name) for name in names
+    )
+
+
 SUPABASE_URL = require_env("SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_URL")
 SUPABASE_KEY = require_env(
     "SUPABASE_KEY",
@@ -201,7 +222,8 @@ def post_tweet(article: dict[str, Any]) -> None:
 #Korea #KAIBrief #{article['category'].capitalize()}"""
 
     try:
-        x_client.create_tweet(text=tweet[:280])
+        safe_print(x_credential_report())
+        x_client.create_tweet(text=tweet[:280], user_auth=True)
         safe_print(f"✅ Tweeted: {article['title_en']}")
         time.sleep(3)
     except Exception as exc:
