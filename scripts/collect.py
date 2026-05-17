@@ -1,12 +1,14 @@
 import hashlib
 import json
 import os
+import sys
 import time
 from datetime import datetime
 from typing import Any
 
 import feedparser
 import requests as req
+import tweepy
 from dotenv import load_dotenv
 from supabase import create_client
 
@@ -41,6 +43,14 @@ def optional_env(*names: str) -> str:
     return ""
 
 
+def safe_print(message: str) -> None:
+    try:
+        print(message)
+    except UnicodeEncodeError:
+        encoding = sys.stdout.encoding or "utf-8"
+        print(message.encode(encoding, errors="replace").decode(encoding))
+
+
 SUPABASE_URL = require_env("SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_URL")
 SUPABASE_KEY = require_env(
     "SUPABASE_KEY",
@@ -57,6 +67,12 @@ if not OPENROUTER_API_KEY:
     raise RuntimeError("OPENROUTER_API_KEY is required")
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+x_client = tweepy.Client(
+    consumer_key=os.environ.get("X_API_KEY"),
+    consumer_secret=os.environ.get("X_API_SECRET"),
+    access_token=os.environ.get("X_ACCESS_TOKEN"),
+    access_token_secret=os.environ.get("X_ACCESS_TOKEN_SECRET"),
+)
 
 
 def slug_for(url: str) -> str:
@@ -162,6 +178,34 @@ def parse_rewrite(raw_text: str) -> dict[str, Any]:
 def rewrite_article(title: str, body: str) -> dict[str, Any]:
     tmdb_context = get_tmdb_season_context(title, body)
     return parse_rewrite(rewrite_to_english(title, body, tmdb_context))
+
+
+def post_tweet(article: dict[str, Any]) -> None:
+    category_emoji = {
+        "economy": "📊",
+        "ai": "🤖",
+        "culture": "🎵",
+        "beauty": "💄",
+        "travel": "✈️",
+        "market": "📈",
+        "policy": "🏛️",
+    }
+    emoji = category_emoji.get(article["category"], "🇰🇷")
+
+    tweet = f"""{emoji} {article['title_en']}
+
+{article['summary_en'][:100]}...
+
+👉 https://kai-brief.vercel.app/article/{article['slug']}
+
+#Korea #KAIBrief #{article['category'].capitalize()}"""
+
+    try:
+        x_client.create_tweet(text=tweet[:280])
+        safe_print(f"✅ Tweeted: {article['title_en']}")
+        time.sleep(3)
+    except Exception as exc:
+        safe_print(f"❌ Tweet failed: {exc}")
 
 
 def infer_category(title: str, summary: str) -> str | None:
@@ -340,7 +384,7 @@ def collect_dart_items() -> list[dict[str, str]]:
     return items
 
 
-def insert_article(item: dict[str, str], rewritten: dict[str, Any]) -> None:
+def insert_article(item: dict[str, str], rewritten: dict[str, Any]) -> dict[str, Any]:
     source_url = item["source_url"]
     inferred_category = infer_category(item.get("title", ""), item.get("body", ""))
     if inferred_category:
@@ -372,7 +416,7 @@ def insert_article(item: dict[str, str], rewritten: dict[str, Any]) -> None:
             payload.pop("body_ja", None)
             payload.pop("summary_ja", None)
             supabase.table("articles").insert(payload).execute()
-            return
+            return payload
 
         if "image_url" not in str(exc):
             raise
@@ -380,6 +424,8 @@ def insert_article(item: dict[str, str], rewritten: dict[str, Any]) -> None:
         print("articles.image_url is unavailable; inserting article without image_url.")
         payload.pop("image_url", None)
         supabase.table("articles").insert(payload).execute()
+
+    return payload
 
 
 def main() -> None:
@@ -393,7 +439,8 @@ def main() -> None:
                 continue
 
             rewritten = rewrite_article(item.get("title", ""), item.get("body", ""))
-            insert_article(item, rewritten)
+            article = insert_article(item, rewritten)
+            post_tweet(article)
             print(f"Inserted: {rewritten['title']}")
             time.sleep(2)
         except Exception as exc:

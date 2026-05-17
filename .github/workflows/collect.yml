@@ -14,6 +14,10 @@ jobs:
       UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
       DART_API_KEY: ${{ secrets.DART_API_KEY }}
       TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+      X_API_KEY: ${{ secrets.X_API_KEY }}
+      X_API_SECRET: ${{ secrets.X_API_SECRET }}
+      X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+      X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
@@ -30,7 +34,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install collector dependencies
-        run: pip install feedparser requests supabase python-dotenv
+        run: pip install -r requirements.txt
 
       - name: Validate required secrets
         run: |
@@ -43,6 +47,10 @@ jobs:
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           DART_API_KEY: ${{ secrets.DART_API_KEY }}
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
