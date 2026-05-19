@@ -222,6 +222,15 @@ def post_tweet(article: dict[str, Any]) -> None:
 #Korea #KAIBrief #{article['category'].capitalize()}"""
 
     try:
+        safe_print(f"API_KEY: {os.environ.get('X_API_KEY', 'MISSING')[:6]}")
+        safe_print(f"API_SECRET: {os.environ.get('X_API_SECRET', 'MISSING')[:6]}")
+        safe_print(
+            f"ACCESS_TOKEN: {os.environ.get('X_ACCESS_TOKEN', 'MISSING')[:6]}"
+        )
+        safe_print(
+            "ACCESS_TOKEN_SECRET: "
+            f"{os.environ.get('X_ACCESS_TOKEN_SECRET', 'MISSING')[:6]}"
+        )
         safe_print(x_credential_report())
         x_client.create_tweet(text=tweet[:280], user_auth=True)
         safe_print(f"✅ Tweeted: {article['title_en']}")

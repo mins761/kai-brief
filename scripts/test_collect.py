@@ -87,6 +87,31 @@ class CollectTweetingTests(unittest.TestCase):
         self.assertNotIn("raw-api-key", report)
         self.assertNotIn("raw-access-token-secret", report)
 
+    def test_post_tweet_prints_x_env_prefixes(self):
+        collect = self.load_collect()
+        collect.os.environ["X_API_KEY"] = "raw-api-key"
+        collect.os.environ["X_API_SECRET"] = "raw-api-secret"
+        collect.os.environ["X_ACCESS_TOKEN"] = "raw-access-token"
+        collect.os.environ["X_ACCESS_TOKEN_SECRET"] = "raw-access-token-secret"
+        printed = []
+        collect.safe_print = lambda message: printed.append(message)
+        collect.x_client = types.SimpleNamespace(create_tweet=lambda **_kwargs: None)
+        collect.time.sleep = lambda _seconds: None
+
+        collect.post_tweet(
+            {
+                "category": "ai",
+                "title_en": "Korean AI chip startup raises funding",
+                "summary_en": "A" * 180,
+                "slug": "abc123",
+            }
+        )
+
+        self.assertIn("API_KEY: raw-ap", printed)
+        self.assertIn("API_SECRET: raw-ap", printed)
+        self.assertIn("ACCESS_TOKEN: raw-ac", printed)
+        self.assertIn("ACCESS_TOKEN_SECRET: raw-ac", printed)
+
     def test_main_tweets_only_after_successful_insert_for_non_duplicates(self):
         collect = self.load_collect()
         tweeted = []
